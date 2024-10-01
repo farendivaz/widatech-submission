@@ -17,37 +17,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { formatRupiah } from "@/lib/rupiah";
+import { useInvoiceStore } from "@/store";
 
-interface DailyRevenueData {
-  date: string;
-  total: string;
-}
+const TimeSeriesGraph: React.FC = () => {
+  const { revenueData, interval, setInterval } = useInvoiceStore();
 
-interface WeeklyRevenueData {
-  week: number;
-  total: string;
-}
-
-interface MonthlyRevenueData {
-  month: number;
-  total: string;
-}
-
-type RevenueData = DailyRevenueData | WeeklyRevenueData | MonthlyRevenueData;
-
-interface TimeSeriesGraphProps {
-  data: RevenueData[];
-  interval: "daily" | "weekly" | "monthly";
-  onIntervalChange: (value: "daily" | "weekly" | "monthly") => void;
-}
-
-const TimeSeriesGraph: React.FC<TimeSeriesGraphProps> = ({
-  data,
-  interval,
-  onIntervalChange,
-}) => {
   // Format the data for the chart
-  const formattedData = data.map((item) => ({
+  const formattedData = revenueData.map((item) => ({
     ...item,
     total: parseFloat(item.total),
   }));
@@ -95,7 +71,7 @@ const TimeSeriesGraph: React.FC<TimeSeriesGraphProps> = ({
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           Revenue Projection
-          <Select value={interval} onValueChange={onIntervalChange}>
+          <Select value={interval} onValueChange={setInterval}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select interval" />
             </SelectTrigger>

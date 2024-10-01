@@ -28,8 +28,22 @@ exports.createInvoice = async (req, res) => {
 
 exports.getInvoices = async (req, res) => {
   try {
-    const invoices = await Invoice.getAllInvoices(); // Call the model to get all invoices
-    res.status(200).json({ invoices });
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    const [invoices, totalCount] = await Invoice.getPaginatedInvoices(
+      limit,
+      offset
+    );
+    const totalPages = Math.ceil(totalCount / limit);
+
+    res.status(200).json({
+      invoices,
+      currentPage: page,
+      totalPages,
+      totalCount,
+    });
   } catch (error) {
     res.status(500).json({ message: "Error fetching invoices", error });
   }

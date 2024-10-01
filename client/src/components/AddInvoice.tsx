@@ -15,16 +15,10 @@ import {
 } from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useInvoiceStore } from "@/store";
 
-interface AddInvoiceProps {
-  onInvoiceAdded: (page: number) => void;
-  revenueData: () => void;
-}
-
-const AddInvoice: React.FC<AddInvoiceProps> = ({
-  onInvoiceAdded,
-  revenueData,
-}) => {
+const AddInvoice: React.FC = () => {
+  const { fetchInvoices, fetchRevenueData } = useInvoiceStore();
   const [newInvoice, setNewInvoice] = useState<NewInvoice>({
     date: "",
     customer_name: "",
@@ -123,8 +117,8 @@ const AddInvoice: React.FC<AddInvoiceProps> = ({
           setDate(undefined);
           setShowSuccessAlert(true);
           setTimeout(() => setShowSuccessAlert(false), 3000);
-          onInvoiceAdded(1);
-          revenueData();
+          fetchInvoices();
+          fetchRevenueData();
         } else {
           console.error("Failed to submit invoice", await response.text());
         }

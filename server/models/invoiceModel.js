@@ -42,9 +42,16 @@ exports.createInvoice = async (
   }
 };
 
-exports.getAllInvoices = async () => {
-  const [invoices] = await db.query(`SELECT * FROM invoices`); // Fetch all invoices
-  return invoices;
+exports.getPaginatedInvoices = async (limit, offset) => {
+  const [invoices] = await db.query(
+    `SELECT * FROM invoices ORDER BY date DESC LIMIT ? OFFSET ?`,
+    [limit, offset]
+  );
+  const [countResult] = await db.query(
+    `SELECT COUNT(*) as count FROM invoices`
+  );
+  const totalCount = countResult[0].count;
+  return [invoices, totalCount];
 };
 
 // Get invoice totals for time-series revenue graph
